@@ -110,6 +110,7 @@ export const enum PatchFlags {
   /**
    * Indicates a hoisted static vnode. This is a hint for hydration to skip
    * the entire sub tree since static content never needs to be updated.
+   * （静态vnode，整个子树都不需要进行处理，因为都是静态的）
    */
   HOISTED = -1,
   /**
@@ -118,6 +119,7 @@ export const enum PatchFlags {
    * when encountering non-compiler generated slots (i.e. manually written
    * render functions, which should always be fully diffed)
    * OR manually cloneVNodes
+   * （跳过优化策略）
    */
   BAIL = -2
 }

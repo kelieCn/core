@@ -1,5 +1,15 @@
 const range: number = 2
 
+// 如：将 "function test() {\n  const a = 'kelie';\n  return a\n}" 这样一个源代码转换成
+// 1  |  function test() {
+//    |  ^^^^^^^^^^^^^^^^^
+// 2  |    const a = 'kelie';
+//    |  ^^^^^^^^^^^^^^^^^^^^
+// 3  |    return a
+//    |  ^^^^^^^^^^
+// 4  |  }
+//    |  ^
+// 这样的代码样式，目前估计是用作控制台输出使用
 export function generateCodeFrame(
   source: string,
   start = 0,

@@ -156,6 +156,8 @@ importers:
         specifier: ^0.34.4
         version: 0.34.4(jsdom@22.1.0)(terser@5.19.4)
 
+  demos/reactivity: {}
+
   packages/compiler-core:
     dependencies:
       '@babel/parser':

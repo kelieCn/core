@@ -94,6 +94,7 @@ class BaseReactiveHandler implements ProxyHandler<Target> {
   get(target: Target, key: string | symbol, receiver: object) {
     const isReadonly = this._isReadonly,
       shallow = this._shallow
+    // 因为其他的一些 api 会设置这些 key 在 proxy 对象上，所以代理 get 方法需要针对这些 key 进行特殊处理
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
     } else if (key === ReactiveFlags.IS_READONLY) {
