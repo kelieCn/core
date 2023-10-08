@@ -29,6 +29,8 @@ export interface Target {
   [ReactiveFlags.RAW]?: any
 }
 
+// 这里会将调用不同 api 生成的 proxy 对象存储在对应的 map 对象中，用处：
+// 1. 防止被代理过的对象又被作为参数传入给 api 进行反复的代理，而是直接返回这些被代理过的对象
 export const reactiveMap = new WeakMap<Target, any>()
 export const shallowReactiveMap = new WeakMap<Target, any>()
 export const readonlyMap = new WeakMap<Target, any>()
@@ -272,10 +274,20 @@ function createReactiveObject(
     return existingProxy
   }
   // only specific value types can be observed.
+  // 该枚举值用来将对象分为两类，在后续的代理中会应用不同的处理器
+  // 1. object、array
+  // 2. set、map、weakSet、weakMap
   const targetType = getTargetType(target)
+  // 这里做了一个兜底处理，如果不在预期的结果中会返回一个特殊的枚举值，此时直接返回值即可，不需要做任何代理，因为未知的类型后续会不可控
+  // 目前我已知的是 window 对象会命中到其中
   if (targetType === TargetType.INVALID) {
     return target
   }
+  // 使用 proxy 代理对比 vue2 使用 Object.defineProperty 的好处
+  // 1. 由于 proxy 仅代理对象的第一层，而对象中属性的值如果是一个对象并不会被代理，所以初始情况下仅仅只代理了对象的第一层，而不会像遍
+  // 历整个对象一样需要给每个属性都绑定上处理器，在 proxy 的实现中，其实是在访问对象属性值时，会触发 collectionHandlers、baseHandlers
+  // 的 get 处理器，在 get 处理器中会判断如果结果也是一个对象的话，会再调用一次对应的 api。这意味着如果被代理的对象中如果存在某一个属性值
+  // 是一个对象，但是从始至终都没有被使用到（访问过），那么就不会进行多余的代理，以及因为代理是在访问属性值是触发，使得初始化的流程会非常快。
   const proxy = new Proxy(
     target,
     targetType === TargetType.COLLECTION ? collectionHandlers : baseHandlers
