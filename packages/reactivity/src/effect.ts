@@ -103,6 +103,10 @@ export class ReactiveEffect<T = any> {
       trackOpBit = 1 << ++effectTrackDepth
 
       if (effectTrackDepth <= maxMarkerBits) {
+        // 如果该 effect 已经有依赖（deps中有值），则说明不是第一次执行 effect.run 方法，因为在第一次执行 effect 回调函数(fn)的时候，会进行 track 调用，
+        // 而在 track 调用会对新的依赖进行收集，所以在第一个执行 effect.run 到这一步的时候，deps 一定是一个空数组，而当收集完依赖之后，如果触发了 trigger，
+        // 则一定又会再次调用 effect.run ，此时由于已经有依赖了，则会给这些依赖都标记为 “被追踪过” 的状态，那么在回调函数(fn)执行时肯定又会触发 track 调用，
+        // 但是由于这些依赖已经被标记为 “被追踪过” 的状态，所以不会再进行依赖的收集。
         initDepMarkers(this)
       } else {
         cleanupEffect(this)
@@ -239,6 +243,7 @@ export function resetTracking() {
  *
  * This will check which effect is running at the moment and record it as dep
  * which records all effects that depend on the reactive property.
+ * targetMap 中保存了所有被追踪过的源对象，并且作为 key来存储所有该源对象中每一个被追踪的字段，而每一个被追踪的字段都存储了所有的收集到的 effect
  *
  * @param target - Object holding the reactive property.
  * @param type - Defines the type of access to the reactive property.
@@ -271,6 +276,7 @@ export function trackEffects(
   if (effectTrackDepth <= maxMarkerBits) {
     if (!newTracked(dep)) {
       dep.n |= trackOpBit // set newly tracked
+      // 如果该依赖没有被 track，则说明确实是新 track 的，此时应该进行依赖的收集，否则表明这个依赖已经被 track 了，不需要进行依赖收集了
       shouldTrack = !wasTracked(dep)
     }
   } else {
@@ -279,6 +285,7 @@ export function trackEffects(
   }
 
   if (shouldTrack) {
+    // 在这里进行依赖的互相收集，dep 为具体某一个字段所包含的所有依赖，而 activeEffect.deps 中包含了收集该依赖的所有 dep
     dep.add(activeEffect!)
     activeEffect!.deps.push(dep)
     if (__DEV__ && activeEffect!.onTrack) {

@@ -262,6 +262,7 @@ function createReactiveObject(
   }
   // target is already a Proxy, return it.
   // exception: calling readonly() on a reactive object
+  // 如果不是调用的 readonly 或 shallowReadonly api，则只需要判断 RAW 就能够知道有没有被代理过，否则如果当前传入的 target 已经是 readonly 过的话直接返回即可
   if (
     target[ReactiveFlags.RAW] &&
     !(isReadonly && target[ReactiveFlags.IS_REACTIVE])
