@@ -13,7 +13,7 @@ const range: number = 2
 export function generateCodeFrame(
   source: string,
   start = 0,
-  end = source.length
+  end = source.length,
 ): string {
   // Split the content into individual lines but capture the newline sequence
   // that separated each line. This is important because the actual sequence is
@@ -38,7 +38,7 @@ export function generateCodeFrame(
         res.push(
           `${line}${' '.repeat(Math.max(3 - String(line).length, 0))}|  ${
             lines[j]
-          }`
+          }`,
         )
         const lineLength = lines[j].length
         const newLineSeqLength =
@@ -49,7 +49,7 @@ export function generateCodeFrame(
           const pad = start - (count - (lineLength + newLineSeqLength))
           const length = Math.max(
             1,
-            end > count ? lineLength - pad : end - start
+            end > count ? lineLength - pad : end - start,
           )
           res.push(`   |  ` + ' '.repeat(pad) + '^'.repeat(length))
         } else if (j > i) {

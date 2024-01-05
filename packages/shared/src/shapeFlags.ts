@@ -1,5 +1,4 @@
-export const enum ShapeFlags {
-  /** dom 元素 */
+export enum ShapeFlags {
   ELEMENT = 1,
   /** 函数组件 */
   FUNCTIONAL_COMPONENT = 1 << 1,
@@ -20,5 +19,5 @@ export const enum ShapeFlags {
   /** 已经 keep alive 的组件 */
   COMPONENT_KEPT_ALIVE = 1 << 9,
   /** 组件（函数组件 或 有状态组件） */
-  COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT
+  COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT,
 }
