@@ -252,6 +252,7 @@ export function createAppAPI<HostElement>(
       },
 
       mixin(mixin: ComponentOptions) {
+        // 只有 vue2 才支持 mixins api，所以这里做了判断逻辑
         if (__FEATURE_OPTIONS_API__) {
           if (!context.mixins.includes(mixin)) {
             context.mixins.push(mixin)

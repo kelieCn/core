@@ -513,6 +513,7 @@ function createBaseVNode(
 
 export { createBaseVNode as createElementVNode }
 
+// 其中 createVNodeWithArgsTransform 仅测试文件中需要对入参进行相应的转换从而创建了这个函数，仅内部使用，外部不需要感知
 export const createVNode = (
   __DEV__ ? createVNodeWithArgsTransform : _createVNode
 ) as typeof _createVNode
@@ -525,6 +526,7 @@ function _createVNode(
   dynamicProps: string[] | null = null,
   isBlockNode = false,
 ): VNode {
+  // 当 type 值无效时，降级为注释类型
   if (!type || type === NULL_DYNAMIC_COMPONENT) {
     if (__DEV__ && !type) {
       warn(`Invalid vnode type when creating vnode: ${type}.`)
