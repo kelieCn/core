@@ -329,6 +329,8 @@ function baseCreateRenderer(
   options: RendererOptions,
   createHydrationFns?: typeof createHydrationFunctions,
 ): any {
+  // 该方法的作用是用来在打包的时候可以通过一些编译配置参数去启用或禁用一些代码，这样在最终打包后的内容中，设置为禁用的功能可以被 tree-shakeing 掉，从而减小包体积
+  // 但该功能仅 esm-bundler 模式才具备，详情：https://cn.vuejs.org/api/compile-time-flags
   // compile-time feature flags check
   if (__ESM_BUNDLER__ && !__TEST__) {
     initFeatureFlags()

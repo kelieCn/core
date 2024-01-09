@@ -40,6 +40,10 @@ let renderer: Renderer<Element | ShadowRoot> | HydrationRenderer
 
 let enabledHydration = false
 
+/**
+ * 确保只有调用了该方法使才会创建一个 renderer，且保证只会生成一个，这样做的好处是如果某些包只应用了 vue 提供的一些其他 api，并没有使用需要 renderer
+ * 的功能，这样 renderer 就始终不会被创建出来，从而在包构建的时候能够把这部分代码剔除掉。
+ */
 function ensureRenderer() {
   return (
     renderer ||
