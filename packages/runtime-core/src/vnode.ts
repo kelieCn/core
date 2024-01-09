@@ -668,7 +668,9 @@ export function cloneVNode<T, U>(
     patchFlag:
       extraProps && vnode.type !== Fragment
         ? patchFlag === -1 // hoisted node
-          ? PatchFlags.FULL_PROPS
+          ? // 由于传入了 extraProps，则可能会因为 extraProps 中的内容导致组件发生变更，此时即便之前的 vnode 被
+            // 标记为纯静态节点，也需要修改克隆出来的新的标记
+            PatchFlags.FULL_PROPS
           : patchFlag | PatchFlags.FULL_PROPS
         : patchFlag,
     dynamicProps: vnode.dynamicProps,
